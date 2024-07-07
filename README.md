@@ -75,3 +75,74 @@ const createClient = async (req, res) => {
 };
 
 module.exports = { createClient };
+
+## Card 3
+
+1 - Criação da tabela categories:
+
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(150) NOT NULL
+);
+
+-- Inserir 10 categorias
+INSERT INTO categories (name) VALUES
+('eletronicos'),
+('roupas'),
+('alimentos'),
+('moveis'),
+('livros'),
+('brinquedos'),
+('ferramentas'),
+('automoveis'),
+('cosmeticos'),
+('esportes');
+
+2 - Criação da tabela products:
+
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    amount VARCHAR(150) DEFAULT '0',
+    color VARCHAR(50),
+    voltage VARCHAR(4) CHECK (voltage IN ('110', '220')),
+    description TEXT,
+    category_id INTEGER NOT NULL REFERENCES categories(id)
+);
+
+3 - Rota para cadastrar um produto:
+
+const express = require('express');
+const router = express.Router();
+const ProductController = require('./ProductController');
+
+// Rota para cadastrar um produto
+router.post('/products', ProductController.createProduct);
+
+module.exports = router;
+
+----
+
+const { Pool } = require('pg');
+const pool = new Pool({
+    user: 'usuario',
+    host: 'localhost',
+    database: 'nome_do_banco',
+    password: 'senha',
+    port: 5432,
+});
+
+const createProduct = async (req, res) => {
+    const { name, amount, color, voltage, description, category_id } = req.body;
+    try {
+        const result = await pool.query(
+            'INSERT INTO products (name, amount, color, voltage, description, category_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+            [name, amount, color, voltage, description, category_id]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+module.exports = { createProduct };
