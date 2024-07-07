@@ -160,3 +160,15 @@ router.get('/products', ProductController.getAllProducts);
 
 module.exports = router;
 
+## Card 5
+
+Rota para listar um produto com detalhes
+
+const express = require('express');
+const router = express.Router();
+const ProductController = require('./ProductController');
+
+// Rota para listar um produto com detalhes
+router.get('/products/:id', ProductController.getProductDetails);
+
+module.exports = router;
