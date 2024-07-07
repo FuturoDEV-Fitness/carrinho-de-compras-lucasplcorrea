@@ -1,4 +1,4 @@
-# Comandos utilizados no desenvolvimento do Projeto.
+# Comandos utilizados no desenvolvimento do Projeto
 
 ## Card 1
 
@@ -9,3 +9,69 @@ git flow feature finish Card_1
 Inseri esse trecho apenas para ilustrar como seriam os inicios e terminos de branch com Git Flow
 
 ## Card 2
+
+git flow feature start Card_2
+
+Criei um novo banco de dados no PG para diferenciar os exercícios
+
+O comando para criar o novo banco de dados foi:
+
+CREATE DATABASE miniprojeto
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LOCALE_PROVIDER = 'libc'
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
+COMMENT ON DATABASE miniprojeto
+    IS 'Banco de dados para miniprojeto';
+
+Criei uma conexão com o banco via VS Code assim consigo rodar os comandos SQL dentro do proprio VS, facilitando as tarefas
+
+1 - Criação da tabela clients
+
+CREATE TABLE clients (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    cpf VARCHAR(50) UNIQUE NOT NULL,
+    contact VARCHAR(20) NOT NULL
+);
+
+2 - Rota POST para cadastrar um cliente:
+
+const express = require('express');
+const router = express.Router();
+const ClientController = require('./ClientController');
+
+// Rota para cadastrar um cliente
+router.post('/clients', ClientController.createClient);
+
+module.exports = router;
+
+----
+
+const { Pool } = require('pg');
+const pool = new Pool({
+    user: 'usuario',
+    host: 'localhost',
+    database: 'nome_do_banco',
+    password: 'senha',
+    port: 5432,
+});
+
+const createClient = async (req, res) => {
+    const { name, email, cpf, contact } = req.body;
+    try {
+        const result = await pool.query(
+            'INSERT INTO clients (name, email, cpf, contact) VALUES ($1, $2, $3, $4) RETURNING *',
+            [name, email, cpf, contact]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+module.exports = { createClient };
