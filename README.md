@@ -146,3 +146,17 @@ const createProduct = async (req, res) => {
 };
 
 module.exports = { createProduct };
+
+## Card 4
+
+Rota para listar todos os produtos
+
+const express = require('express');
+const router = express.Router();
+const ProductController = require('./ProductController');
+
+// Rota para listar todos os produtos
+router.get('/products', ProductController.getAllProducts);
+
+module.exports = router;
+
