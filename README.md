@@ -1,21 +1,23 @@
 # Comandos utilizados no desenvolvimento do Projeto
 
-## Card 1
+## Card 1 📝
 
-git flow feature start Card_1
+### Git Flow
 
-git flow feature finish Card_1
+ - Iniciar uma nova branch:
+```bash
+git flow feature start Card_XXX
+```
+ - Finaliza a branch
+```bash
+git flow feature finish Card_XXX
+```
+## Card 2 🛠️
+### Configuração do Banco de Dados PostgreSQL
 
-Inseri esse trecho apenas para ilustrar como seriam os inicios e terminos de branch com Git Flow
+- Criação do banco de dados miniprojeto:
 
-## Card 2
-
-git flow feature start Card_2
-
-Criei um novo banco de dados no PG para diferenciar os exercícios
-
-O comando para criar o novo banco de dados foi:
-
+```SQL
 CREATE DATABASE miniprojeto
     WITH
     OWNER = postgres
@@ -26,11 +28,10 @@ CREATE DATABASE miniprojeto
 
 COMMENT ON DATABASE miniprojeto
     IS 'Banco de dados para miniprojeto';
+```
+- Criação da Tabela clients e Rota POST para Cadastrar um Cliente
 
-Criei uma conexão com o banco via VS Code assim consigo rodar os comandos SQL dentro do proprio VS, facilitando as tarefas
-
-1 - Criação da tabela clients
-
+```SQL
 CREATE TABLE clients (
     id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
@@ -38,48 +39,11 @@ CREATE TABLE clients (
     cpf VARCHAR(50) UNIQUE NOT NULL,
     contact VARCHAR(20) NOT NULL
 );
+```
 
-2 - Rota POST para cadastrar um cliente:
-
-const express = require('express');
-const router = express.Router();
-const ClientController = require('./ClientController');
-
-// Rota para cadastrar um cliente
-router.post('/clients', ClientController.createClient);
-
-module.exports = router;
-
-----
-
-const { Pool } = require('pg');
-const pool = new Pool({
-    user: 'usuario',
-    host: 'localhost',
-    database: 'nome_do_banco',
-    password: 'senha',
-    port: 5432,
-});
-
-const createClient = async (req, res) => {
-    const { name, email, cpf, contact } = req.body;
-    try {
-        const result = await pool.query(
-            'INSERT INTO clients (name, email, cpf, contact) VALUES ($1, $2, $3, $4) RETURNING *',
-            [name, email, cpf, contact]
-        );
-        res.status(201).json(result.rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
-module.exports = { createClient };
-
-## Card 3
-
-1 - Criação da tabela categories:
-
+## Card 3 📦
+- Criação da Tabela categories e Inserção de Categorias
+```SQL
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL
@@ -97,10 +61,10 @@ INSERT INTO categories (name) VALUES
 ('automoveis'),
 ('cosmeticos'),
 ('esportes');
-
-2 - Criação da tabela products:
-
-CREATE TABLE products (
+```
+ - Criação da Tabela products e Rota para Cadastrar um Produto
+ ```SQL
+ CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     amount VARCHAR(150) DEFAULT '0',
@@ -109,48 +73,10 @@ CREATE TABLE products (
     description TEXT,
     category_id INTEGER NOT NULL REFERENCES categories(id)
 );
-
-3 - Rota para cadastrar um produto:
-
-const express = require('express');
-const router = express.Router();
-const ProductController = require('./ProductController');
-
-// Rota para cadastrar um produto
-router.post('/products', ProductController.createProduct);
-
-module.exports = router;
-
-----
-
-const { Pool } = require('pg');
-const pool = new Pool({
-    user: 'usuario',
-    host: 'localhost',
-    database: 'nome_do_banco',
-    password: 'senha',
-    port: 5432,
-});
-
-const createProduct = async (req, res) => {
-    const { name, amount, color, voltage, description, category_id } = req.body;
-    try {
-        const result = await pool.query(
-            'INSERT INTO products (name, amount, color, voltage, description, category_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [name, amount, color, voltage, description, category_id]
-        );
-        res.status(201).json(result.rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
-module.exports = { createProduct };
-
-## Card 4
-
-Rota para listar todos os produtos
-
+```
+## Card 4 📋
+- Rota para Listar Todos os Produtos
+```js
 const express = require('express');
 const router = express.Router();
 const ProductController = require('./ProductController');
@@ -159,11 +85,11 @@ const ProductController = require('./ProductController');
 router.get('/products', ProductController.getAllProducts);
 
 module.exports = router;
+```
 
-## Card 5
-
-Rota para listar um produto com detalhes
-
+## Card 5 📄
+- Rota para listar um produto com detalhes
+```js
 const express = require('express');
 const router = express.Router();
 const ProductController = require('./ProductController');
@@ -172,11 +98,13 @@ const ProductController = require('./ProductController');
 router.get('/products/:id', ProductController.getProductDetails);
 
 module.exports = router;
+```
 
-## Card 6
+## Card 6📦🛒
 
-Tabelas orders e orders_items
+ - Criação das tabelas orders e orders_items e rota para cadastrar um pedido
 
+```SQL
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
     client_id INTEGER REFERENCES clients(id),
@@ -192,14 +120,4 @@ CREATE TABLE orders_items (
     amount INTEGER,
     price DECIMAL(10, 2)
 );
-
-Rota para cadastrar um pedido:
-
-const express = require('express');
-const router = express.Router();
-const OrderController = require('./OrderController');
-
-// Rota para cadastrar um pedido
-router.post('/orders', OrderController.createOrder);
-
-module.exports = router;
+```
