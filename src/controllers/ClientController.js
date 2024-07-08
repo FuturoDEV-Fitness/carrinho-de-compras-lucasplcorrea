@@ -1,11 +1,5 @@
 const { Pool } = require('pg');
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'miniprojeto',
-    password: '',
-    port: 5432,
-});
+const pool = require('../db/db');
 
 const createClient = async (req, res) => {
     const { name, email, cpf, contact } = req.body;
