@@ -172,3 +172,34 @@ const ProductController = require('./ProductController');
 router.get('/products/:id', ProductController.getProductDetails);
 
 module.exports = router;
+
+## Card 6
+
+Tabelas orders e orders_items
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    client_id INTEGER REFERENCES clients(id),
+    total DECIMAL(10, 2),
+    address TEXT,
+    observations TEXT
+);
+
+CREATE TABLE orders_items (
+    id SERIAL PRIMARY KEY,
+    order_id INTEGER REFERENCES orders(id),
+    product_id INTEGER REFERENCES products(id),
+    amount INTEGER,
+    price DECIMAL(10, 2)
+);
+
+Rota para cadastrar um pedido:
+
+const express = require('express');
+const router = express.Router();
+const OrderController = require('./OrderController');
+
+// Rota para cadastrar um pedido
+router.post('/orders', OrderController.createOrder);
+
+module.exports = router;
